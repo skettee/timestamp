@@ -44,10 +44,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
         
-        // Position timestamp at bottom center
+        // Position timestamp at top center
         const textMetrics = ctx.measureText(timestamp);
         const x = (canvas.width - textMetrics.width) / 2;
-        const y = canvas.height - 20;
+        const y = 40;  // 상단에서 40px 아래에 위치
 
         // Draw text with stroke for better visibility
         ctx.strokeText(timestamp, x, y);
