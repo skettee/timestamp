@@ -2,20 +2,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     const video = document.getElementById('camera');
     const canvas = document.getElementById('canvas');
     const captureBtn = document.getElementById('capture');
+    const switchBtn = document.getElementById('switch-camera');
     const timestampDiv = document.getElementById('timestamp');
     const ctx = canvas.getContext('2d');
+    let currentFacingMode = 'environment';
 
-    // Request camera access
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' },
-            audio: false
-        });
-        video.srcObject = stream;
-    } catch (err) {
-        console.error('Error accessing camera:', err);
-        alert('Error accessing camera. Please make sure you have granted camera permissions.');
+    // Function to start camera with specified facing mode
+    async function startCamera(facingMode) {
+        try {
+            // Stop any existing stream
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+            
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: facingMode },
+                audio: false
+            });
+            video.srcObject = stream;
+            currentFacingMode = facingMode;
+        } catch (err) {
+            console.error('Error accessing camera:', err);
+            alert('Error accessing camera. Please make sure you have granted camera permissions.');
+        }
     }
+
+    // Initial camera start with back camera
+    await startCamera('environment');
+
+    // Switch camera button handler
+    switchBtn.addEventListener('click', async () => {
+        const newMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+        await startCamera(newMode);
+    });
 
     // Update timestamp every second
     function updateTimestamp() {
